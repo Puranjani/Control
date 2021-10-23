@@ -30,7 +30,7 @@ class _ControlPageState extends State<ControlPage> with SingleTickerProviderStat
   initState() {
     _curve = Curves.easeOut;
     _animationController = AnimationController(vsync: this, duration: Duration(
-      milliseconds: 300
+      milliseconds: 500
     ));
     _animationController.addListener(() {
       setState(() {});
@@ -42,7 +42,7 @@ class _ControlPageState extends State<ControlPage> with SingleTickerProviderStat
       parent: _animationController,
       curve: Interval(0.0, 1, curve: _curve,),
     ));
-    Timer(Duration(seconds: 1), animate);
+    Timer(Duration(seconds: 1), ()=>_animationController.forward());
     super.initState();
   }
 
@@ -52,16 +52,11 @@ class _ControlPageState extends State<ControlPage> with SingleTickerProviderStat
     super.dispose();
   }
 
-  animate() {
-    _animationController.forward();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blue.shade800,
       body: Stack(
-        fit: StackFit.loose,
         alignment: Alignment.center,
         children: <Widget>[
           Transform.translate(
@@ -79,7 +74,7 @@ class _ControlPageState extends State<ControlPage> with SingleTickerProviderStat
           ),
           Column(
             children: <Widget>[
-              Container(
+              Padding(
                 padding: const EdgeInsets.only(
                   left: 10, right: 20,
                 ),
@@ -113,7 +108,7 @@ class _ControlPageState extends State<ControlPage> with SingleTickerProviderStat
                                   )
                                 ],
                               ),
-                              Stack(
+                              Column(
                                 children: <Widget>[
                                   Text(
                                     widget.title.split('\n').last,
@@ -125,7 +120,7 @@ class _ControlPageState extends State<ControlPage> with SingleTickerProviderStat
                                   Transform(
                                     transform: Matrix4.translationValues(
                                       0,
-                                      _translateItems.value * 40,
+                                      - 40 + _translateItems.value * 40,
                                       0
                                     ),
                                     child: Text(
@@ -241,130 +236,127 @@ class _ControlPageState extends State<ControlPage> with SingleTickerProviderStat
               ),
               Hero(
                 tag: 'body',
-                child: Flexible(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width,
-                    padding: EdgeInsets.symmetric(horizontal: 10),
-                    color: Colors.grey.shade100,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  color: Colors.grey.shade100,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          SvgPicture.asset('assets/images/solution2.svg'),
+                          Expanded(
+                            child: Slider(
+                              value: _value.toDouble() * _translateItems.value,
+                              thumbColor: Colors.white,
+                              min: 0,
+                              max: 100,
+                              activeColor: Colors.yellow,
+                              inactiveColor: Colors.yellow.withOpacity(0.2),
+                              onChanged: (values){
+                                setState(() {
+                                  _value = values;
+                                });
+                              }
+                            ),
+                          ),
+                          SvgPicture.asset('assets/images/solution.svg'),
+                        ],
+                      ),
+                      Text(
+                        '\t\t\tColors',
+                        style: Theme.of(context).textTheme.headline5!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue.shade800
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2.0),
+                        child: Row(
                           children: <Widget>[
-                            SvgPicture.asset('assets/images/solution2.svg'),
-                            Expanded(
-                              child: Slider(
-                                value: _value.toDouble() * _translateItems.value,
-                                thumbColor: Colors.white,
-                                divisions: 6,
-                                min: 0,
-                                max: 100,
-                                activeColor: Colors.yellow,
-                                inactiveColor: Colors.yellow.withOpacity(0.2),
-                                onChanged: (values){
-                                  setState(() {
-                                    _value = values;
-                                  });
-                                }
+                            CustomTransform(
+                              color: Colors.redAccent,
+                              x: _translateItems.value * 10,
+                              y: 0,
+                              z: 0,
+                              function: (){
+                                setState(() {
+                                  _color = Colors.redAccent;
+                                });
+                              },
+                            ),
+                            CustomTransform(
+                              color: Colors.greenAccent.shade400,
+                              x: -10 + _translateItems.value * 30,
+                              y: 0,
+                              z: 0,
+                              function: (){
+                                setState(() {
+                                  _color = Colors.greenAccent.shade400;
+                                });
+                              },
+                            ),
+                            CustomTransform(
+                              color: Colors.blueAccent,
+                              x: -20 + _translateItems.value * 50,
+                              y: 0,
+                              z: 0,
+                              function: (){
+                                setState(() {
+                                  _color = Colors.blueAccent;
+                                });
+                              },
+                            ),
+                            CustomTransform(
+                              color: Colors.deepPurpleAccent,
+                              x: -30 + _translateItems.value * 70,
+                              y: 0,
+                              z: 0,
+                              function: (){
+                                setState(() {
+                                  _color = Colors.deepPurpleAccent;
+                                });
+                              },
+                            ),
+                            CustomTransform(
+                              color: Colors.orangeAccent,
+                              x: -40 + _translateItems.value * 90,
+                              y: 0,
+                              z: 0,
+                              function: (){
+                                setState(() {
+                                  _color = Colors.orangeAccent;
+                                });
+                              },
+                            ),
+                            Transform(
+                              transform: Matrix4.translationValues(
+                                -50 + _translateItems.value * 110,
+                                0,
+                                0
+                              ),
+                              child: CircleAvatar(
+                                child: SvgPicture.asset('assets/images/+.svg'),
+                                backgroundColor: Colors.white
                               ),
                             ),
-                            SvgPicture.asset('assets/images/solution.svg'),
                           ],
                         ),
-                        Text(
-                          '\t\t\tColors',
-                          style: Theme.of(context).textTheme.headline5!.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue.shade800
-                          ),
+                      ),
+                      Text(
+                        '\t\t\tScenes',
+                        style: Theme.of(context).textTheme.headline5!.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue.shade800
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2.0),
-                          child: Row(
-                            children: <Widget>[
-                              CustomTransform(
-                                color: Colors.redAccent,
-                                x: _translateItems.value * 50,
-                                y: 0,
-                                z: 0,
-                                function: (){
-                                  setState(() {
-                                    _color = Colors.redAccent;
-                                  });
-                                },
-                              ),
-                              CustomTransform(
-                                color: Colors.greenAccent.shade400,
-                                x: -10 + _translateItems.value * 70,
-                                y: 0,
-                                z: 0,
-                                function: (){
-                                  setState(() {
-                                    _color = Colors.greenAccent.shade400;
-                                  });
-                                },
-                              ),
-                              CustomTransform(
-                                color: Colors.blueAccent,
-                                x: -20 + _translateItems.value * 90,
-                                y: 0,
-                                z: 0,
-                                function: (){
-                                  setState(() {
-                                    _color = Colors.blueAccent;
-                                  });
-                                },
-                              ),
-                              CustomTransform(
-                                color: Colors.deepPurpleAccent,
-                                x: -30 + _translateItems.value * 110,
-                                y: 0,
-                                z: 0,
-                                function: (){
-                                  setState(() {
-                                    _color = Colors.deepPurpleAccent;
-                                  });
-                                },
-                              ),
-                              CustomTransform(
-                                color: Colors.orangeAccent,
-                                x: -40 + _translateItems.value * 130,
-                                y: 0,
-                                z: 0,
-                                function: (){
-                                  setState(() {
-                                    _color = Colors.orangeAccent;
-                                  });
-                                },
-                              ),
-                              Transform(
-                                transform: Matrix4.translationValues(
-                                  -50 + _translateItems.value * 150,
-                                  0,
-                                  0
-                                ),
-                                child: CircleAvatar(
-                                  child: SvgPicture.asset('assets/images/+.svg'),
-                                  backgroundColor: Colors.white
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Text(
-                          '\t\t\tScenes',
-                          style: Theme.of(context).textTheme.headline5!.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue.shade800
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              Flexible(
+              Expanded(
                 child: Container(
                   width: MediaQuery.of(context).size.width,
                   color: Colors.grey.shade50,
